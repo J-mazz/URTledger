@@ -85,4 +85,3 @@ cd dist
 tar -czf "${APP_NAME}_v${VERSION}_Installer.tar.gz" "$APP_NAME"
 
 echo "[+] Package created at: dist/${APP_NAME}_v${VERSION}_Installer.tar.gz"
-echo "Send this file to your father."
