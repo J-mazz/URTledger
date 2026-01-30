@@ -1,0 +1,35 @@
+# .gitignore — tailored to this repo (created 2026-01-30)
+# Only ignore files that are present or very likely given the project's workflow.
+
+# Rust build artifacts
+/target/
+
+# Distribution / packaging artifacts
+/dist/
+*.tar.gz
+
+# Local development database (do not commit)
+urt_ledger.db
+*.db
+
+# Common editor / OS files (conservative)
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+tmp/
+temp/
+*.tmp
+
+# Secrets / env
+.env
+*.key
+*.pem
+
+# Notes:
+# - Cargo.lock is intentionally tracked for this application to ensure reproducible builds.
+# - App icons and project assets (e.g., assets/URTlogo.png, app_icon.png) are tracked on purpose.
+#   If you prefer to exclude the local app icon, add `app_icon.png` here.

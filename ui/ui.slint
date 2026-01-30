@@ -1,0 +1,125 @@
+import { Button, VerticalBox, LineEdit, TabWidget, ScrollView, HorizontalBox } from "std-widgets.slint";
+
+// Define a structure to hold Stage/Grade data
+export struct ConfigItem { id: int, name: string }
+
+export component MainWindow inherits Window {
+    title: "URT Ledger - Inventory Management";
+    min-width: 600px;
+    min-height: 700px;
+
+    // --- Properties ---
+    in property<float> stage_total_weight: 0.0;
+    in property<int> stage_batch_count: 0;
+    
+    // Dynamic Lists from Rust
+    in property<[ConfigItem]> stages_list: [];
+    in property<[ConfigItem]> grades_list: [];
+
+    // --- Callbacks ---
+    callback add_batch(string, string, string, int, int);
+    callback request_stage_summary(int);
+    callback add_new_stage(string);
+    callback add_new_grade(string);
+
+    // --- Main Layout ---
+    TabWidget {
+        // TAB 1: INVENTORY ENTRY
+        Tab {
+            title: "Entry";
+            VerticalBox {
+                padding: 20px;
+                spacing: 15px;
+
+                Text { text: "New Batch Entry"; font-size: 24px; horizontal-alignment: center; }
+
+                name_input := LineEdit { placeholder-text: "Strain Name (e.g. Blue Dream)"; height: 35px; }
+                weight_input := LineEdit { placeholder-text: "Weight (lbs)"; height: 35px; }
+                price_input := LineEdit { placeholder-text: "Price per Unit ($)"; height: 35px; }
+
+                Button {
+                    text: "Save Batch";
+                    primary: true;
+                    height: 40px;
+                    clicked => {
+                        root.add_batch(name_input.text, weight_input.text, price_input.text, 1, 1);
+                        name_input.text = ""; weight_input.text = ""; price_input.text = "";
+                    }
+                }
+
+                Rectangle {
+                    background: #2c2c2c;
+                    border-radius: 8px;
+                    height: 100px;
+                    VerticalBox {
+                        alignment: center;
+                        Text { text: "Active Stage Summary"; color: white; font-size: 18px; }
+                        Text { text: "Total Weight: " + root.stage_total_weight + " lbs"; color: #4CAF50; font-size: 16px; }
+                        Text { text: "Batch Count: " + root.stage_batch_count; color: #aaaaaa; }
+                    }
+                }
+            }
+        }
+
+        // TAB 2: CONFIGURATION
+        Tab {
+            title: "Configuration";
+            HorizontalBox {
+                padding: 10px;
+                spacing: 20px;
+
+                // LEFT COLUMN: STAGES
+                VerticalBox {
+                    Text { text: "Processing Stages"; font-size: 18px; font-weight: 700; }
+                    Rectangle {
+                        background: #f0f0f0;
+                        border-radius: 4px;
+                        ScrollView {
+                            VerticalBox {
+                                for stage in root.stages_list : Text { text: stage.name; font-size: 14px; color: black; }
+                            }
+                        }
+                    }
+
+                    HorizontalBox {
+                        new_stage_input := LineEdit { placeholder-text: "New Stage Name"; }
+                        Button { 
+                            text: "Add"; 
+                            width: 60px;
+                            clicked => { 
+                                root.add_new_stage(new_stage_input.text); 
+                                new_stage_input.text = "";
+                            }
+                        }
+                    }
+                }
+
+                // RIGHT COLUMN: GRADES
+                VerticalBox {
+                    Text { text: "Quality Grades"; font-size: 18px; font-weight: 700; }
+                    Rectangle {
+                        background: #f0f0f0;
+                        border-radius: 4px;
+                        ScrollView {
+                            VerticalBox {
+                                for grade in root.grades_list : Text { text: grade.name; font-size: 14px; color: black; }
+                            }
+                        }
+                    }
+
+                    HorizontalBox {
+                        new_grade_input := LineEdit { placeholder-text: "New Grade Name"; }
+                        Button { 
+                            text: "Add"; 
+                            width: 60px;
+                            clicked => { 
+                                root.add_new_grade(new_grade_input.text); 
+                                new_grade_input.text = "";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
